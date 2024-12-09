@@ -11,7 +11,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@aws-sdk/client-bedrock-runtime": "^3.616.0",
+    "@aws-sdk/client-bedrock-runtime": "^3.705.0",
     "duck-duck-scrape": "^2.2.5",
     "string-strip-html": "^13.4.8"
   }

@@ -5,7 +5,9 @@ import {
 
 const sonnet = 'anthropic.claude-3-5-sonnet-20240620-v1:0';
 const haiku = 'anthropic.claude-3-haiku-20240307-v1:0';
-const MODEL = sonnet;
+const micro = 'amazon.nova-micro-v1:0';
+const pro = 'amazon.nova-pro-v1:0';
+const MODEL = pro;
 const MAX_TOKENS = 1000;
 const TEMPERATURE = 0.1;
 
@@ -16,23 +18,33 @@ export const invokeConversation = async (
     end = ''
 ) => {
     const client = new BedrockRuntimeClient({ region: 'us-east-1' });
+
     const payload = {
-        anthropic_version: 'bedrock-2023-05-31',
-        max_tokens: MAX_TOKENS,
-        messages: messages,
-        temperature,
+        messages: messages.map((x) => ({
+            role: x.role,
+            content: x.content.map((xx) => ({
+                text: xx.text,
+            })),
+        })),
+
+        inferenceConfig: {
+            maxTokens: MAX_TOKENS,
+            temperature,
+        },
     };
 
     if (end) {
-        payload.inferenceConfig = {
-            stopSequences: [end],
-        };
+        payload.inferenceConfig.stopSequences = [end];
     }
 
     if (start) {
         payload.messages.push({
             role: 'assistant',
-            content: [{ type: 'text', text: start }],
+            content: [
+                {
+                    text: start,
+                },
+            ],
         });
     }
 
@@ -44,5 +56,6 @@ export const invokeConversation = async (
     const apiResponse = await client.send(command);
     const decodedResponseBody = new TextDecoder().decode(apiResponse.body);
     const responseBody = JSON.parse(decodedResponseBody);
-    return responseBody.content[0].text;
+    console.log(responseBody.output.message.content[0].text);
+    return responseBody.output.message.content[0].text;
 };

@@ -23,7 +23,7 @@ export default function create() {
                 fn
             })
         },
-        start: (port = 3000) => {
+        start: (port = 4000) => {
             const server = http.createServer(async (req, res) => {
                 const parsedUrl = url.parse(req.url, true)
                 if (req.method === 'GET') {
